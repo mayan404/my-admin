@@ -127,8 +127,8 @@ catalogs:
       specifier: ^4.15.0
       version: 4.15.0
     '@vite-pwa/vitepress':
-      specifier: ^0.5.4
-      version: 0.5.4
+      specifier: ^1.0.0
+      version: 1.0.0
     '@vitejs/plugin-vue':
       specifier: ^5.2.3
       version: 5.2.3
@@ -879,7 +879,7 @@ importers:
         version: link:../internal/vite-config
       '@vite-pwa/vitepress':
         specifier: 'catalog:'
-        version: 0.5.4(vite-plugin-pwa@0.21.2(vite@5.4.14(@types/node@22.14.0)(less@4.3.0)(sass@1.86.3)(terser@5.39.0))(workbox-build@7.3.0)(workbox-window@7.3.0))
+        version: 1.0.0(vite-plugin-pwa@0.21.2(vite@5.4.14(@types/node@22.14.0)(less@4.3.0)(sass@1.86.3)(terser@5.39.0))(workbox-build@7.3.0)(workbox-window@7.3.0))
       vitepress:
         specifier: 'catalog:'
         version: 1.6.3(@algolia/client-search@5.20.4)(@types/node@22.14.0)(async-validator@4.2.5)(axios@1.8.4)(change-case@5.4.4)(less@4.3.0)(nprogress@0.2.0)(postcss@8.5.3)(qrcode@1.5.4)(sass@1.86.3)(search-insights@2.17.3)(sortablejs@1.15.6)(terser@5.39.0)(typescript@5.8.3)
@@ -4718,11 +4718,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@vite-pwa/vitepress@0.5.4':
-    resolution: {integrity: sha512-g57qwG983WTyQNLnOcDVPQEIeN+QDgK/HdqghmygiUFp3a/MzVvmLXC/EVnPAXxWa8W2g9pZ9lE3EiDGs2HjsA==}
+  '@vite-pwa/vitepress@1.0.0':
+    resolution: {integrity: sha512-i5RFah4urA6tZycYlGyBslVx8cVzbZBcARJLDg5rWMfAkRmyLtpRU6usGfVOwyN9kjJ2Bkm+gBHXF1hhr7HptQ==}
     peerDependencies:
-      '@vite-pwa/assets-generator': ^0.2.6
-      vite-plugin-pwa: '>=0.21.2 <1'
+      '@vite-pwa/assets-generator': ^1.0.0
+      vite-plugin-pwa: ^1.0.0
     peerDependenciesMeta:
       '@vite-pwa/assets-generator':
         optional: true
@@ -13829,7 +13829,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@vite-pwa/vitepress@0.5.4(vite-plugin-pwa@0.21.2(vite@5.4.14(@types/node@22.14.0)(less@4.3.0)(sass@1.86.3)(terser@5.39.0))(workbox-build@7.3.0)(workbox-window@7.3.0))':
+  '@vite-pwa/vitepress@1.0.0(vite-plugin-pwa@0.21.2(vite@5.4.14(@types/node@22.14.0)(less@4.3.0)(sass@1.86.3)(terser@5.39.0))(workbox-build@7.3.0)(workbox-window@7.3.0))':
     dependencies:
       vite-plugin-pwa: 0.21.2(vite@5.4.14(@types/node@22.14.0)(less@4.3.0)(sass@1.86.3)(terser@5.39.0))(workbox-build@7.3.0)(workbox-window@7.3.0)
 
