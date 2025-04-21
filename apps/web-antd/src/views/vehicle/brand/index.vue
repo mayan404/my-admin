@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+
+import { onMounted } from 'vue';
 
 // import { useRouter } from 'vue-router';
 import { Page, useVbenModal } from '@vben/common-ui';
 
-import { Button, message } from 'ant-design-vue';
+import { Button, Image } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 
@@ -18,22 +20,27 @@ const [FormModal, formModalApi] = useVbenModal({
 });
 
 interface RowType {
-  address: string;
-  age: number;
   id: number;
   name: string;
-  nickname: string;
-  role: string;
+  imageUrl: string;
 }
 
 const gridOptions: VxeGridProps<RowType> = {
   columns: [
-    { title: '序号', type: 'seq', width: 50 },
-    { field: 'name', title: 'Name' },
-    { field: 'age', sortable: true, title: 'Age' },
-    { field: 'nickname', title: 'Nickname' },
-    { field: 'role', title: 'Role' },
-    { field: 'address', showOverflow: true, title: 'Address' },
+    { title: '序号', type: 'seq', width: 130 },
+    { field: 'name', title: '品牌名称', width: 200 },
+    {
+      field: 'imageUrl',
+      slots: { default: 'image-url' },
+      title: 'Image',
+      width: 100,
+    },
+    // {
+    //   cellRender: { name: 'CellImage' },
+    //   field: 'imageUrl',
+    //   title: 'image',
+    //   width: 130,
+    // },
     {
       field: 'action',
       fixed: 'right',
@@ -42,7 +49,7 @@ const gridOptions: VxeGridProps<RowType> = {
       width: 220,
     },
   ],
-  data: MOCK_TABLE_DATA,
+  // data: MOCK_TABLE_DATA,
   pagerConfig: {
     enabled: false,
   },
@@ -54,15 +61,10 @@ const gridOptions: VxeGridProps<RowType> = {
   },
   stripe: true,
   border: true,
+  showOverflow: false,
 };
 
-const gridEvents: VxeGridListeners<RowType> = {
-  cellClick: ({ row }) => {
-    message.info(`cell-click: ${row.name}`);
-  },
-};
-
-const [Grid] = useVbenVxeGrid({ gridEvents, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 // const [Grid, gridApi] = useVbenVxeGrid({ gridEvents, gridOptions });
 
 // function openTabWithParams() {
@@ -84,24 +86,27 @@ function openFormModal() {
 //     gridApi.setLoading(false);
 //   }, 2000);
 // }
+
+onMounted(() => {
+  gridApi.setGridOptions({ data: MOCK_TABLE_DATA });
+});
 </script>
 
 <template>
-  <Page>
+  <Page auto-content-height>
+    <!-- FormModal 是表单弹框 -->
     <FormModal />
     <Grid>
-      <!-- <template #toolbar-actions>
-        <Button class="mr-2" type="primary">左侧插槽</Button>
-      </template> -->
-      <template #toolbar-tools>
-        <!-- <Button class="mr-2" type="primary" @click="openTabWithParams">
-          添加
-        </Button> -->
-        <Button type="primary" @click="openFormModal"> 添加品牌 </Button>
-        <!-- <Button class="mr-2" type="primary" @click="changeLoading">
-          显示loading
-        </Button> -->
+      <template #image-url="{ row }">
+        <Image :src="row.imageUrl" height="30" width="30" />
       </template>
+      <template #toolbar-actions>
+        <Button type="primary" @click="openFormModal"> 添加品牌 </Button>
+        <!-- <Button class="mr-2" type="primary">左侧插槽</Button> -->
+      </template>
+      <!-- <template #toolbar-tools>
+        <Button class="mr-2" type="primary">插槽</Button>
+      </template> -->
       <template #action>
         <Button type="link" @click="openFormModal">编辑</Button>
         <Button type="link">删除</Button>

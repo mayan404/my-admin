@@ -1,24 +1,16 @@
 interface TableRowData {
-  address: string;
-  age: number;
   id: number;
   name: string;
-  nickname: string;
-  role: string;
+  imageUrl: string;
 }
-
-const roles = ['User', 'Admin', 'Manager', 'Guest'];
 
 export const MOCK_TABLE_DATA: TableRowData[] = (() => {
   const data: TableRowData[] = [];
   for (let i = 0; i < 40; i++) {
     data.push({
-      address: `New York${i}`,
-      age: i + 1,
       id: i,
       name: `Test${i}`,
-      nickname: `Test${i}`,
-      role: roles[Math.floor(Math.random() * roles.length)] as string,
+      imageUrl: `https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/37.jpg`,
     });
   }
   return data;

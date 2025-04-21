@@ -18,7 +18,7 @@ const [Form, formApi] = useVbenForm({
         placeholder: '请输入',
       },
       fieldName: 'field1',
-      label: '字段1',
+      label: '品牌名称',
       rules: 'required',
     },
     {
@@ -27,20 +27,7 @@ const [Form, formApi] = useVbenForm({
         placeholder: '请输入',
       },
       fieldName: 'field2',
-      label: '字段2',
-      rules: 'required',
-    },
-    {
-      component: 'Select',
-      componentProps: {
-        options: [
-          { label: '选项1', value: '1' },
-          { label: '选项2', value: '2' },
-        ],
-        placeholder: '请输入',
-      },
-      fieldName: 'field3',
-      label: '字段3',
+      label: '品牌拼音',
       rules: 'required',
     },
   ],
@@ -87,5 +74,12 @@ function onSubmit(values: Record<string, any>) {
 <template>
   <Modal>
     <Form />
+    <div v-if="uploadedImageUrl" class="mt-4">
+      <img
+        :src="uploadedImageUrl"
+        alt="Uploaded Image"
+        style="max-width: 100%"
+      />
+    </div>
   </Modal>
 </template>
