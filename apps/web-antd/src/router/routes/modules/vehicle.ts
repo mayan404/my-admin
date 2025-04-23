@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-view-in-ar',
       keepAlive: true,
       order: 1000,
-      title: '车型管理',
+      title: '品牌车型',
     },
     name: 'vehicle',
     path: '/vehicle',

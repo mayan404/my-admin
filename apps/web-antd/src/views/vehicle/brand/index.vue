@@ -9,6 +9,7 @@ import { Page, useVbenModal } from '@vben/common-ui';
 import { Button, Image } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { BrandList } from '#/api/brand/brand';
 
 import FormModalDemo from './form-modal-demo.vue';
 import { MOCK_TABLE_DATA } from './table-data';
@@ -17,7 +18,16 @@ import { MOCK_TABLE_DATA } from './table-data';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: FormModalDemo,
+  onOpenChange: openFormModal2,
 });
+
+function openFormModal2(isOpen: boolean) {
+  if (isOpen) {
+    console.warn('打开');
+  } else {
+    console.warn('关闭');
+  }
+}
 
 interface RowType {
   id: number;
@@ -88,6 +98,10 @@ function openFormModal() {
 // }
 
 onMounted(() => {
+  const brandList = BrandList({});
+  console.warn('上传进度：', brandList);
+  console.warn('上传进度：', brandList);
+
   gridApi.setGridOptions({ data: MOCK_TABLE_DATA });
 });
 </script>

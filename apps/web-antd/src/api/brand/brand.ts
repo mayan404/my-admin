@@ -1,0 +1,31 @@
+import { requestClient } from '#/api/request3';
+
+export namespace BrandApi {
+  /** 品牌列表接口参数 */
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface BrandListParams {}
+
+  /** 单个品牌信息 */
+  export interface BrandItem {
+    BrandId: number;
+    BrandImgUrl: string;
+    BrandName: string;
+    BrandPy: string;
+  }
+
+  /** 品牌列表接口返回值中的 data 部分 */
+  export interface BrandListResult {
+    BrandId: number;
+    items: BrandItem[];
+  }
+}
+
+/**
+ * 品牌列表
+ */
+export async function BrandList(data: BrandApi.BrandListParams) {
+  return requestClient.post<BrandApi.BrandListResult>(
+    '/car/brand/brandList',
+    data,
+  );
+}
