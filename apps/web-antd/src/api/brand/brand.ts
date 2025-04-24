@@ -18,6 +18,13 @@ export namespace BrandApi {
     BrandId: number;
     items: BrandItem[];
   }
+
+  export interface BrandAddParams {
+    BrandId?: number;
+    BrandImgUrl: string;
+    BrandName: string;
+    BrandPy: string;
+  }
 }
 
 /**
@@ -28,4 +35,11 @@ export async function BrandList(data: BrandApi.BrandListParams) {
     '/car/brand/brandList',
     data,
   );
+}
+
+/**
+ * 品牌添加
+ */
+export async function brandAdd(data: BrandApi.BrandAddParams) {
+  return requestClient.post('/car/brand/brandAdd', data);
 }

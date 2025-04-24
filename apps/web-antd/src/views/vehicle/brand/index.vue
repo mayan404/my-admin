@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { BrandApi } from '#/api/brand/brand'; // 修改为仅类型导入
 
 import { onMounted } from 'vue';
 
@@ -12,7 +13,6 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { BrandList } from '#/api/brand/brand';
 
 import FormModalDemo from './form-modal-demo.vue';
-import { MOCK_TABLE_DATA } from './table-data';
 
 // const router = useRouter();
 
@@ -25,24 +25,26 @@ function openFormModal2(isOpen: boolean) {
   if (isOpen) {
     console.warn('打开');
   } else {
+    loadBrandList();
     console.warn('关闭');
   }
 }
 
 interface RowType {
-  id: number;
-  name: string;
-  imageUrl: string;
+  BrandId: number;
+  BrandName: string;
+  BrandImgUrl: string;
 }
 
 const gridOptions: VxeGridProps<RowType> = {
   columns: [
-    { title: '序号', type: 'seq', width: 130 },
-    { field: 'name', title: '品牌名称', width: 200 },
+    // { title: '序号', type: 'seq', width: 130 },
+    { field: 'BrandId', title: 'id', width: 130 },
+    { field: 'BrandName', title: '品牌名称', width: 200 },
     {
-      field: 'imageUrl',
+      field: 'BrandImgUrl',
       slots: { default: 'image-url' },
-      title: 'Image',
+      title: '图标',
       width: 100,
     },
     // {
@@ -82,13 +84,8 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 //   router.push({ name: 'FeatureTabDetailDemo' });
 // }
 
-function openFormModal() {
-  formModalApi
-    .setData({
-      // 表单值
-      values: { field1: 'abc', field2: '123' },
-    })
-    .open();
+function openFormModal(row?: RowType) {
+  formModalApi.setData({ values: row }).open();
 }
 // function changeLoading() {
 //   gridApi.setLoading(true);
@@ -97,12 +94,19 @@ function openFormModal() {
 //   }, 2000);
 // }
 
-onMounted(() => {
-  const brandList = BrandList({});
-  console.warn('上传进度：', brandList);
-  console.warn('上传进度：', brandList);
+async function loadBrandList() {
+  try {
+    const result: BrandApi.BrandListResult = await BrandList({});
+    const { items } = result;
+    console.warn('上传进度：', items);
+    gridApi.setGridOptions({ data: items });
+  } catch (error) {
+    console.error('获取品牌列表失败:', error);
+  }
+}
 
-  gridApi.setGridOptions({ data: MOCK_TABLE_DATA });
+onMounted(() => {
+  loadBrandList();
 });
 </script>
 
@@ -112,17 +116,17 @@ onMounted(() => {
     <FormModal />
     <Grid>
       <template #image-url="{ row }">
-        <Image :src="row.imageUrl" height="30" width="30" />
+        <Image :src="row.BrandImgUrl" height="30" width="30" />
       </template>
       <template #toolbar-actions>
-        <Button type="primary" @click="openFormModal"> 添加品牌 </Button>
+        <Button type="primary" @click="openFormModal()"> 添加品牌 </Button>
         <!-- <Button class="mr-2" type="primary">左侧插槽</Button> -->
       </template>
       <!-- <template #toolbar-tools>
         <Button class="mr-2" type="primary">插槽</Button>
       </template> -->
-      <template #action>
-        <Button type="link" @click="openFormModal">编辑</Button>
+      <template #action="{ row }">
+        <Button type="link" @click="openFormModal(row)">编辑</Button>
         <Button type="link">删除</Button>
       </template>
     </Grid>

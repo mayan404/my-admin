@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import type { UploadFile } from 'ant-design-vue';
 
-import { toRaw } from 'vue';
+import { ref, toRaw } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
 import { message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
+import { brandAdd } from '#/api/brand/brand';
 import { upload_file } from '#/api/extend/cos/upload';
 
 defineOptions({
@@ -22,7 +23,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: '请输入',
       },
-      fieldName: 'field1',
+      fieldName: 'BrandName',
       label: '品牌名称',
       rules: 'required',
     },
@@ -31,7 +32,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: '请输入',
       },
-      fieldName: 'field2',
+      fieldName: 'BrandPy',
       label: '品牌拼音',
       rules: 'required',
     },
@@ -78,12 +79,26 @@ const [Modal, modalApi] = useVbenModal({
       const { values } = modalApi.getData<Record<string, any>>();
       // 这里写个详情接口
       if (values) {
+        brandId.value = values.BrandId; // 获取并保存传递过来的 id
+        if (values.BrandImgUrl) {
+          // 给图片上传组件赋值
+          values.files = [
+            {
+              uid: '-1',
+              name: '图片名称',
+              status: 'done',
+              url: values.BrandImgUrl,
+            },
+          ];
+        }
+
         formApi.setValues(values);
       }
     }
   },
   title: '基本信息',
 });
+const brandId = ref<number | undefined>(undefined);
 
 async function onSubmit(values: Record<string, any>) {
   const files = toRaw(values.files) as UploadFile[];
@@ -100,10 +115,17 @@ async function onSubmit(values: Record<string, any>) {
     // 锁定模态框
     modalApi.lock();
 
-    values.files = doneFiles.map((file) => file.response?.url || file.url);
-    values.files = values.files[0];
+    values.files = doneFiles.map((file) => {
+      return file.response?.url || file.url;
+    });
+    values.BrandImgUrl = values.files[0];
     // 调用实际的提交接口
-    // const response = await uploadFormData(formData);
+    brandAdd({
+      BrandId: brandId.value,
+      BrandName: values.BrandName,
+      BrandImgUrl: values.BrandImgUrl,
+      BrandPy: values.BrandPy,
+    });
     console.warn('提交成功，响应数据：', values);
 
     // 关闭模态框
