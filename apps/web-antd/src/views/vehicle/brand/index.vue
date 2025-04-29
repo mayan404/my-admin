@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { BrandApi } from '#/api/brand/brand'; // 修改为仅类型导入
 
 import { onMounted } from 'vue';
@@ -7,10 +10,11 @@ import { onMounted } from 'vue';
 // import { useRouter } from 'vue-router';
 import { Page, useVbenModal } from '@vben/common-ui';
 
-import { Button, Image } from 'ant-design-vue';
+import { Button, Image, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { BrandList } from '#/api/brand/brand';
+import { brandDel, BrandList } from '#/api/brand/brand';
+import { $t } from '#/locales';
 
 import FormModalDemo from './form-modal-demo.vue';
 
@@ -27,7 +31,7 @@ interface RowType {
   BrandImgUrl: string;
 }
 
-const gridOptions: VxeGridProps<RowType> = {
+const gridOptions: VxeTableGridOptions<RowType> = {
   columns: [
     // { title: '序号', type: 'seq', width: 130 },
     { field: 'BrandId', title: 'id', width: 130 },
@@ -45,18 +49,33 @@ const gridOptions: VxeGridProps<RowType> = {
     //   width: 130,
     // },
     {
-      field: 'action',
+      align: 'center',
+      cellRender: {
+        attrs: {
+          nameField: 'BrandName',
+          nameTitle: '品牌',
+          onClick: onActionClick,
+        },
+        name: 'CellOperation',
+      },
+      field: 'operation',
       fixed: 'right',
-      slots: { default: 'action' },
       title: '操作',
-      width: 220,
+      width: 130,
     },
+    // {
+    //   field: 'action',
+    //   fixed: 'right',
+    //   slots: { default: 'action' },
+    //   title: '操作',
+    //   width: 220,
+    // },
   ],
   proxyConfig: {
     ajax: {
       query: async (_params) => {
         const result: BrandApi.BrandListResult = await BrandList({});
-        return result;
+        return result.items;
       },
     },
   },
@@ -83,15 +102,44 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 //   router.push({ name: 'FeatureTabDetailDemo' });
 // }
 
+function onActionClick(e: OnActionClickParams<BrandApi.BrandItem>) {
+  switch (e.code) {
+    case 'delete': {
+      onDelete(e.row);
+      break;
+    }
+    case 'edit': {
+      openFormModal(e.row);
+      break;
+    }
+  }
+}
+
+function onDelete(row: BrandApi.BrandItem) {
+  const hideLoading = message.loading({
+    content: $t('ui.actionMessage.deleting', [row.BrandName]),
+    duration: 0,
+    key: 'action_process_msg',
+  });
+  brandDel({
+    BrandId: row.BrandId,
+  })
+    .then(() => {
+      message.success({
+        content: $t('ui.actionMessage.deleteSuccess', [row.BrandName]),
+        key: 'action_process_msg',
+      });
+      gridApi.reload();
+    })
+    .catch(() => {
+      hideLoading();
+    });
+}
+
 function openFormModal(row?: RowType) {
   formModalApi.setData({ values: row }).open();
 }
-// function changeLoading() {
-//   gridApi.setLoading(true);
-//   setTimeout(() => {
-//     gridApi.setLoading(false);
-//   }, 2000);
-// }
+
 function openFormModal2(isOpen: boolean) {
   if (isOpen) {
     console.warn('打开');
@@ -135,10 +183,11 @@ onMounted(() => {
       <!-- <template #toolbar-tools>
         <Button class="mr-2" type="primary">插槽</Button>
       </template> -->
-      <template #action="{ row }">
+      <!-- 下面这个 template 的属性  #action 和上面  slots: { default: 'action' } 它相对应-->
+      <!-- <template #action="{ row }">
         <Button type="link" @click="openFormModal(row)">编辑</Button>
         <Button type="link">删除</Button>
-      </template>
+      </template> -->
     </Grid>
   </Page>
 </template>

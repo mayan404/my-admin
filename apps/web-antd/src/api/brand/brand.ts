@@ -25,6 +25,9 @@ export namespace BrandApi {
     BrandName: string;
     BrandPy: string;
   }
+  export interface BrandDelParams {
+    BrandId: number;
+  }
 }
 
 /**
@@ -42,4 +45,11 @@ export async function BrandList(data: BrandApi.BrandListParams) {
  */
 export async function brandAdd(data: BrandApi.BrandAddParams) {
   return requestClient.post('/car/brand/brandAdd', data);
+}
+
+/**
+ * 品牌删除
+ */
+export async function brandDel(data: BrandApi.BrandDelParams) {
+  return requestClient.post('/car/brand/brandDel', data);
 }
