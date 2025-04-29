@@ -120,7 +120,7 @@ async function onSubmit(values: Record<string, any>) {
     });
     values.BrandImgUrl = values.files[0];
     // 调用实际的提交接口
-    brandAdd({
+    await brandAdd({
       BrandId: brandId.value,
       BrandName: values.BrandName,
       BrandImgUrl: values.BrandImgUrl,

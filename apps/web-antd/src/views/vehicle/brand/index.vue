@@ -21,15 +21,6 @@ const [FormModal, formModalApi] = useVbenModal({
   onOpenChange: openFormModal2,
 });
 
-function openFormModal2(isOpen: boolean) {
-  if (isOpen) {
-    console.warn('打开');
-  } else {
-    loadBrandList();
-    console.warn('关闭');
-  }
-}
-
 interface RowType {
   BrandId: number;
   BrandName: string;
@@ -61,6 +52,14 @@ const gridOptions: VxeGridProps<RowType> = {
       width: 220,
     },
   ],
+  proxyConfig: {
+    ajax: {
+      query: async (_params) => {
+        const result: BrandApi.BrandListResult = await BrandList({});
+        return result;
+      },
+    },
+  },
   // data: MOCK_TABLE_DATA,
   pagerConfig: {
     enabled: false,
@@ -93,20 +92,30 @@ function openFormModal(row?: RowType) {
 //     gridApi.setLoading(false);
 //   }, 2000);
 // }
-
-async function loadBrandList() {
-  try {
-    const result: BrandApi.BrandListResult = await BrandList({});
-    const { items } = result;
-    console.warn('上传进度：', items);
-    gridApi.setGridOptions({ data: items });
-  } catch (error) {
-    console.error('获取品牌列表失败:', error);
+function openFormModal2(isOpen: boolean) {
+  if (isOpen) {
+    console.warn('打开');
+  } else {
+    // 请求列表最新数据
+    // loadBrandList();
+    // 刷新列表
+    gridApi.reload();
+    console.warn('关闭');
   }
 }
+// async function loadBrandList() {
+//   try {
+//     const result: BrandApi.BrandListResult = await BrandList({});
+//     const { items } = result;
+//     console.warn('列表数据：', items);
+//     gridApi.setGridOptions({ data: items });
+//   } catch (error) {
+//     console.error('获取品牌列表失败:', error);
+//   }
+// }
 
 onMounted(() => {
-  loadBrandList();
+  // loadBrandList();
 });
 </script>
 
@@ -120,6 +129,7 @@ onMounted(() => {
       </template>
       <template #toolbar-actions>
         <Button type="primary" @click="openFormModal()"> 添加品牌 </Button>
+        <!-- <Button type="primary" @click="() => gridApi.query()"> 刷新 </Button> -->
         <!-- <Button class="mr-2" type="primary">左侧插槽</Button> -->
       </template>
       <!-- <template #toolbar-tools>
