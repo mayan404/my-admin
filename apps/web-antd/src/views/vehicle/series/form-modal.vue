@@ -11,6 +11,7 @@ import { seriesAdd } from '#/api/brand/series';
 defineOptions({
   name: 'FormModelDemo',
 });
+const brandOptions2 = ref<{ label: string; value: string }[]>([]); // 定义品牌选项
 
 const [Form, formApi] = useVbenForm({
   handleSubmit: onSubmit,
@@ -20,9 +21,20 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: '请输入',
       },
-      fieldName: 'BrandName',
+      fieldName: 'CarSeriesName',
       label: '系列名称',
       rules: 'required',
+    },
+    {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: brandOptions2,
+        placeholder: '请选择品牌',
+        // autoSelect: 'first',
+      },
+      fieldName: 'BrandId',
+      label: '品牌',
     },
   ],
   showDefaultActions: false,
@@ -41,8 +53,10 @@ const [Modal, modalApi] = useVbenModal({
   },
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      const { values } = modalApi.getData<Record<string, any>>();
+      const { values, brandOptions } = modalApi.getData<Record<string, any>>();
       // 这里写个详情接口
+      console.warn('brandOptions：', brandOptions);
+      brandOptions2.value = brandOptions;
       if (values) {
         CarSeriesId.value = values.CarSeriesId; // 获取并保存传递过来的 id
         formApi.setValues(values);

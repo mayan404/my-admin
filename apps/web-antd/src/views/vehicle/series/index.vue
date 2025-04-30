@@ -6,7 +6,7 @@ import type {
 } from '#/adapter/vxe-table';
 import type { SeriesApi } from '#/api/brand/series'; // 修改为仅类型导入
 
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 // import { useRouter } from 'vue-router';
 import { Page, useVbenModal } from '@vben/common-ui';
@@ -14,6 +14,7 @@ import { Page, useVbenModal } from '@vben/common-ui';
 import { Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { BrandList } from '#/api/brand/brand';
 import { seriesDel, seriesList } from '#/api/brand/series';
 import { $t } from '#/locales';
 
@@ -26,6 +27,8 @@ const [FormModal, formModalApi] = useVbenModal({
   onOpenChange: openFormModal2,
 });
 
+const brandOptions = ref<{ label: number; value: string }[]>([]); // 定义品牌选项
+
 const formOptions: VbenFormProps = {
   // 默认展开
   collapsed: false,
@@ -34,16 +37,7 @@ const formOptions: VbenFormProps = {
       component: 'Select',
       componentProps: {
         allowClear: true,
-        options: [
-          {
-            label: 'Color1',
-            value: '1',
-          },
-          {
-            label: 'Color2',
-            value: '2',
-          },
-        ],
+        options: brandOptions,
         placeholder: '请选择',
       },
       fieldName: 'color',
@@ -82,7 +76,7 @@ const gridOptions: VxeTableGridOptions<SeriesApi.SeriesItem> = {
     ajax: {
       query: async ({ page }, formValues) => {
         message.success(`Query params: ${JSON.stringify(formValues)}`);
-        console.error(page);
+        console.warn(page);
 
         const result: SeriesApi.seriesListResult = await seriesList({});
         return result.items;
@@ -141,7 +135,9 @@ function onDelete(row: SeriesApi.SeriesItem) {
 }
 
 function openFormModal(row?: SeriesApi.SeriesItem) {
-  formModalApi.setData({ values: row }).open();
+  formModalApi
+    .setData({ values: row, brandOptions: brandOptions.value })
+    .open();
 }
 
 function openFormModal2(isOpen: boolean) {
@@ -156,8 +152,16 @@ function openFormModal2(isOpen: boolean) {
   }
 }
 
-onMounted(() => {
-  // loadBrandList();
+onMounted(async () => {
+  try {
+    const result = await BrandList({}); // 调用接口获取品牌列表
+    brandOptions.value = result.items.map((item) => ({
+      label: item.BrandName,
+      value: item.BrandId,
+    })); // 假设接口返回的数据结构包含 name 和 id
+  } catch (error) {
+    console.error('获取品牌列表失败:', error);
+  }
 });
 </script>
 
