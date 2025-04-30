@@ -16,7 +16,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { brandDel, BrandList } from '#/api/brand/brand';
 import { $t } from '#/locales';
 
-import FormModalDemo from './form-modal-demo.vue';
+import FormModalDemo from './form-modal.vue';
 
 // const router = useRouter();
 

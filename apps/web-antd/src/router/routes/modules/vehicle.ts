@@ -33,7 +33,7 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'vehicleModel',
         path: '/vehicle/Model',
-        component: () => import('#/views/vehicle/model/index.vue'),
+        component: () => import('#/views/vehicle/model/list.vue'),
       },
     ],
   },
