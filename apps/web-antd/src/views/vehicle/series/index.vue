@@ -27,7 +27,7 @@ const [FormModal, formModalApi] = useVbenModal({
   onOpenChange: openFormModal2,
 });
 
-const brandOptions = ref<{ label: number; value: string }[]>([]); // 定义品牌选项
+const brandOptions = ref<{ label: string; value: number }[]>([]); // 定义品牌选项
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -40,7 +40,7 @@ const formOptions: VbenFormProps = {
         options: brandOptions,
         placeholder: '请选择',
       },
-      fieldName: 'color',
+      fieldName: 'BrandId',
       label: '品牌',
     },
   ],
@@ -55,6 +55,7 @@ const formOptions: VbenFormProps = {
 const gridOptions: VxeTableGridOptions<SeriesApi.SeriesItem> = {
   columns: [
     { field: 'CarSeriesId', title: 'id', width: 130 },
+    { field: 'BrandName', title: '品牌', width: 200 },
     { field: 'CarSeriesName', title: '系列名称', width: 200 },
     {
       align: 'center',
@@ -75,11 +76,33 @@ const gridOptions: VxeTableGridOptions<SeriesApi.SeriesItem> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        message.success(`Query params: ${JSON.stringify(formValues)}`);
+        console.warn(`Query params: ${JSON.stringify(formValues)}`);
         console.warn(page);
 
-        const result: SeriesApi.seriesListResult = await seriesList({});
-        return result.items;
+        try {
+          const brandRes = await BrandList({}); // 调用接口获取品牌列表
+          brandOptions.value = brandRes.items.map((item) => ({
+            label: item.BrandName,
+            value: item.BrandId,
+          })); // 假设接口返回的数据结构包含 name 和 id
+          const result: SeriesApi.seriesListResult =
+            await seriesList(formValues);
+          // 给列表的品牌列进行赋值
+          const itemsWithBrandName = result.items.map((item) => {
+            const brand = brandOptions.value.find((option) => {
+              return option.value === item.BrandId;
+            });
+            return {
+              ...item,
+              BrandName: brand ? brand.label : '未知品牌',
+            };
+          });
+          return itemsWithBrandName;
+        } catch (error) {
+          console.error('获取系列列表失败:', error);
+          message.error('获取系列列表失败，请稍后重试');
+          return [];
+        }
       },
     },
   },
@@ -120,7 +143,7 @@ function onDelete(row: SeriesApi.SeriesItem) {
     key: 'action_process_msg',
   });
   seriesDel({
-    CarSeriesId: row.BrandId,
+    CarSeriesId: row.CarSeriesId,
   })
     .then(() => {
       message.success({
@@ -153,15 +176,17 @@ function openFormModal2(isOpen: boolean) {
 }
 
 onMounted(async () => {
-  try {
-    const result = await BrandList({}); // 调用接口获取品牌列表
-    brandOptions.value = result.items.map((item) => ({
-      label: item.BrandName,
-      value: item.BrandId,
-    })); // 假设接口返回的数据结构包含 name 和 id
-  } catch (error) {
-    console.error('获取品牌列表失败:', error);
-  }
+  // try {
+  //   const result = await BrandList({}); // 调用接口获取品牌列表
+  //   brandOptions.value = result.items.map((item) => ({
+  //     label: item.BrandName,
+  //     value: item.BrandId,
+  //   })); // 假设接口返回的数据结构包含 name 和 id
+  //   console.warn('brandOptions1 :', brandOptions);
+  //   console.warn('brandOptions2 :', brandOptions.value);
+  // } catch (error) {
+  //   console.error('获取品牌列表失败:', error);
+  // }
 });
 </script>
 

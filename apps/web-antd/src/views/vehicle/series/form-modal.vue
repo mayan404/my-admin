@@ -11,10 +11,18 @@ import { seriesAdd } from '#/api/brand/series';
 defineOptions({
   name: 'FormModelDemo',
 });
-const brandOptions2 = ref<{ label: string; value: string }[]>([]); // 定义品牌选项
+const brandOptions2 = ref<{ label: string; value: number }[]>([]); // 定义品牌选项
 
 const [Form, formApi] = useVbenForm({
   handleSubmit: onSubmit,
+  commonConfig: {
+    // 在label后显示一个冒号
+    colon: true,
+    // 所有表单项
+    componentProps: {
+      class: 'w-full',
+    },
+  },
   schema: [
     {
       component: 'Input',
@@ -31,7 +39,6 @@ const [Form, formApi] = useVbenForm({
         allowClear: true,
         options: brandOptions2,
         placeholder: '请选择品牌',
-        // autoSelect: 'first',
       },
       fieldName: 'BrandId',
       label: '品牌',
