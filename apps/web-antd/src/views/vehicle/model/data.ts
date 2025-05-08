@@ -2,6 +2,8 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { modelApi } from '#/api/brand/model';
 
+import { ref } from 'vue';
+
 import { $t } from '#/locales';
 
 export function useFormSchema(): VbenFormSchema[] {
@@ -41,14 +43,36 @@ export function useFormSchema(): VbenFormSchema[] {
   ];
 }
 
-export function useGridFormSchema(): VbenFormSchema[] {
+export function useGridFormSchema(
+  brandOptions: ReturnType<typeof ref<{ label: string; value: number }[]>>,
+  seriesOptions: ReturnType<typeof ref<{ label: string; value: number }[]>>,
+): VbenFormSchema[] {
   return [
+    {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: brandOptions,
+        placeholder: '请选择',
+      },
+      fieldName: 'BrandId',
+      label: '品牌',
+    },
+    {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: seriesOptions,
+        placeholder: '请选择',
+      },
+      fieldName: 'CarSeriesId',
+      label: '系列',
+    },
     {
       component: 'Input',
       fieldName: 'name',
       label: $t('system.role.roleName'),
     },
-    { component: 'Input', fieldName: 'id', label: $t('system.role.id') },
     {
       component: 'Select',
       componentProps: {
@@ -60,16 +84,6 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
       fieldName: 'status',
       label: $t('system.role.status'),
-    },
-    {
-      component: 'Input',
-      fieldName: 'remark',
-      label: $t('system.role.remark'),
-    },
-    {
-      component: 'RangePicker',
-      fieldName: 'createTime',
-      label: $t('system.role.createTime'),
     },
   ];
 }

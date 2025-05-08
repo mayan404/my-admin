@@ -7,13 +7,17 @@ import type {
 } from '#/adapter/vxe-table';
 import type { modelApi } from '#/api/brand/model';
 
+import { ref } from 'vue';
+
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
 import { Button, message, Modal } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { BrandList } from '#/api/brand/brand';
 import { modelDel, modelList } from '#/api/brand/model';
+import { seriesList } from '#/api/brand/series';
 import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from './data';
@@ -23,11 +27,13 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
   // connectedComponent: Form,
   destroyOnClose: true,
 });
+const brandOptions = ref<{ label: string; value: number }[]>([]); // 定义品牌选项
+const seriesOptions = ref<{ label: string; value: number }[]>([]); // 定义品牌选项
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
     fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
-    schema: useGridFormSchema(),
+    schema: useGridFormSchema(brandOptions, seriesOptions),
     submitOnChange: true,
   },
   gridOptions: {
@@ -37,6 +43,16 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
+          const brandRes = await BrandList({}); // 调用接口获取品牌列表
+          brandOptions.value = brandRes.items.map((item) => ({
+            label: item.BrandName,
+            value: item.BrandId,
+          }));
+          const seriesRes = await seriesList(formValues);
+          seriesOptions.value = seriesRes.items.map((item) => ({
+            label: item.CarSeriesName,
+            value: item.CarSeriesId,
+          }));
           return await modelList({
             page: page.currentPage,
             pageSize: page.pageSize,
