@@ -42,7 +42,7 @@
     "@vben/utils": "workspace:*",
     "@vueuse/core": "catalog:",
     "ant-design-vue": "catalog:",
-    "cos-js-sdk-v5": "^1.8.7",
+    "cos-js-sdk-v5": "^1.10.1",
     "dayjs": "catalog:",
     "pinia": "catalog:",
     "vue": "catalog:",
